@@ -5,7 +5,7 @@ module ApiWarden
     autoload :Params, 'api_warden/authentication/params'
     autoload :HeaderParams, 'api_warden/authentication/header_params'
 
-    attr_reader :scope, :request, :params
+    attr_reader :scope, :request, :params, :key_for_access_token
 
     def initialize(scope, request)
       @scope = scope
@@ -52,10 +52,10 @@ module ApiWarden
       return unless @authenticated.nil?
 
       id, access_token = @params.retrieve_id, @params.retrieve_access_token
-      key = @scope.key_for_access_token(id, access_token)
+      @key_for_access_token = @scope.key_for_access_token(id, access_token)
 
       if access_token && !access_token.empty?
-        ApiWarden.redis { |conn| @value_for_access_token = conn.get(key) }
+        ApiWarden.redis { |conn| @value_for_access_token = conn.get(@key_for_access_token) }
       end
 
       unless @value_for_access_token
@@ -104,6 +104,22 @@ module ApiWarden
       ApiWarden.redis { |conn| conn.del(key) }
     end
 
+    # @return [Fixnum] the time to live for access token in seconds
+    def ttl_for_access_token
+      raise_if_authentication_failed!
+
+      ttl_for_key(@key_for_access_token)
+    end
+
+    # Set the ttl for access token.
+    def ttl_for_access_token=(seconds)
+      raise_if_authentication_failed!
+
+      key = @key_for_access_token
+      value = @value_for_access_token
+      ApiWarden.redis { |conn| conn.set(key, value, ex: seconds) }
+    end
+
     private
       def ensure_authenticated
         return unless @authenticated.nil?
@@ -118,6 +134,15 @@ module ApiWarden
       def ensure_authenticated_or_refreshable
         ensure_authenticated
         ensure_refreshable unless @authenticated
+      end
+
+      def raise_if_authentication_failed!
+        ensure_authenticated
+        raise 'The authentication is not valid.' if @authenticated == false
+      end
+
+      def ttl_for_key(key)
+        ApiWarden.redis { |conn| conn.ttl(key) }
       end
 
     class AuthenticationError < Exception

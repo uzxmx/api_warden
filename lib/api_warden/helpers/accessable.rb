@@ -23,6 +23,9 @@ module ApiWarden
           end
           false
         else
+          if (block = scope.on_authenticate_success) && block.respond_to?(:call)
+            instance_exec(authentication, &block)
+          end
           true
         end
       end

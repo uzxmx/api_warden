@@ -33,6 +33,9 @@ module ApiWarden
     #  * on_authenticate_failed: [Proc]
     #      the block to be called when authentication failed. An authentication will be passed as an argument.
     #
+    #  * on_authenticate_success: [Proc]
+    #      the block to be called when authentication succeeds. An authentication will be passed as an argument.
+    #
     #  * expire_time_for_refresh_token: [Fixnum]
     #      the expire time for refresh token in seconds, default is EXPIRE_TIME_FOR_REFRESH_TOKEN.
     #
