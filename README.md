@@ -1,19 +1,22 @@
-# ApiWarden
+# api_warden
 
-This is a gem that you can use to protect your API in rails. By default it uses access token to authenticate the requests, and uses refresh token to get new access token when access token expires.
-
-## Examples
-
-https://github.com/UzxMx/api_warden_examples
+This is a gem that you can use to protect your API in rails. By default it uses
+access token to authenticate the requests, and uses refresh token to get new
+access token before access token expires.
 
 ## Usage
 
-* Add the gem to your application's Gemfile. And execute `bundle install`
+See [here](https://github.com/uzxmx/api_warden_examples) for a working example
+project.
+
+* Add the gem to your application's Gemfile. And execute `bundle install`.
+
 ```
 gem 'api_warden'
 ```
 
-* Create a file config/initializers/api_warden.rb. And add the below codes.
+* Create file `config/initializers/api_warden.rb`. And add the below codes.
+
 ```
 ApiWarden.configure do |config|
   config.redis = {
@@ -26,14 +29,16 @@ end
 ApiWarden.ward_by('users')
 ```
 
-* Create app/controllers/base_controller.rb. And add the below codes.
+* Create file `app/controllers/base_controller.rb`. And add the below codes.
+
 ```
-class BaseController < ActionController::Base
+class BaseController < ActionController::API
   before_action :ward_by_user!
 end
 ```
 
-* Create app/controllers/users_controller.rb. And add the below codes.
+* Create file `app/controllers/users_controller.rb`. And add the below codes.
+
 ```
 class UsersController < BaseController
   skip_before_action :ward_by_user!, only: [:sign_in]
@@ -50,13 +55,16 @@ class UsersController < BaseController
 end
 ```
 
-* In client side, you need to add below http headers to access the server protected resources.
+* On client side, you need to specify below http headers to access the server protected resources.
+
 ```
 X-User-Id: <the user id rendered in sign in api>
 X-User-Access-Token: <the access token rendered in sign in api>
 ```
 
-* If the access token expires, you need to use the refresh token to get a new pair of access and refresh token. Modify the users_controller.rb.
+* If the access token expires, you can use the refresh token to get a new
+  pair of access and refresh token. Update `users_controller.rb` as below.
+
 ```
 class UsersController < BaseController
   skip_before_action :ward_by_user!, only: [:sign_in, :refresh_token]
@@ -79,13 +87,14 @@ class UsersController < BaseController
         user_id: user_id,
         access_token: access_token,
         refresh_token: refresh_token
-      }      
-    end    
+      }
+    end
   end
 end
 ```
 
-* In client side, when requesting the refresh token api, you need to add below http headers.
+* On client side, when requesting the refresh token api, you need to specify below http headers.
+
 ```
 X-User-Id: <the user id rendered in sign in api>
 X-User-Refresh-Token: <the refresh token rendered in sign in api>
@@ -93,13 +102,28 @@ X-User-Refresh-Token: <the refresh token rendered in sign in api>
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+### Install dependencies
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+```
+bundle install
+```
+
+### Run tests
+
+```
+bundle exec rake spec
+```
+
+### Release a new version
+
+To release a new version, update the version number in `version.rb`, and then
+run `bundle exec rake release`, which will create a git tag for the version,
+push git commits and tags, and push the `.gem` file to
+[rubygems.org](https://rubygems.org).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/UzxMx/api_warden. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/uzxmx/api_warden. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
@@ -107,4 +131,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the ApiWarden project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/UzxMx/api_warden/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the api_warden project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/uzxmx/api_warden/blob/master/CODE_OF_CONDUCT.md).
