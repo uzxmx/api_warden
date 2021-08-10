@@ -60,7 +60,7 @@ module ApiWarden
 
       unless @value_for_access_token
         @authenticated = false
-        raise AuthenticationError        
+        raise AuthenticationError
       end
 
       @authenticated = true
@@ -94,7 +94,7 @@ module ApiWarden
 
       @refreshable = true
       @id = id
-      self      
+      self
     end
 
     # TODO remove refresh token as well

@@ -62,7 +62,7 @@ Rails.application.routes.draw do
     post :refresh_access_token
   end
 
-  controller :resource, path: 'resource' do
+  scope controller: :resource, path: 'resource' do
     get :unprotected
     get :protected
   end

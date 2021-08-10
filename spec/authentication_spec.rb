@@ -49,35 +49,35 @@ RSpec.describe 'Authentication', :type => :request do
     end
 
     it 'has access to unprotected resource' do
-      get '/resource/unprotected', nil, @headers
+      get '/resource/unprotected', headers: @headers
 
       expect(response.body).to include_json(msg: "I'm unprotected!")
     end
 
     it 'has access to protected resource' do
-      get '/resource/protected', nil, @headers
+      get '/resource/protected', headers: @headers
 
       expect(response.body).to include_json(msg: "I'm protected!")
     end
 
     it 'can sign out' do
-      delete '/sign_out', nil, @headers
+      delete '/sign_out', headers: @headers
       expect(response.body).to include_json(succ: true)
 
-      get '/resource/protected', nil, @headers
+      get '/resource/protected', headers: @headers
       expect(response.status).to eq(401)
     end
 
     it 'does not have access to protected resource when using wrong id' do
       @headers[:'X-User-Id'] = 2
-      get '/resource/protected', nil, @headers
+      get '/resource/protected', headers: @headers
 
       expect(response.status).to eq(401)
     end
 
     it 'does not have access to protected resource when using wrong token' do
       @headers[:'X-User-Access-Token'] += 'suffix'
-      get '/resource/protected', nil, @headers
+      get '/resource/protected', headers: @headers
 
       expect(response.status).to eq(401)
     end
@@ -88,7 +88,7 @@ RSpec.describe 'Authentication', :type => :request do
       end
 
       it 'does not have access to protected resource' do
-        get '/resource/protected', nil, @headers
+        get '/resource/protected', headers: @headers
 
         expect(response.status).to eq(401)
       end
@@ -97,23 +97,23 @@ RSpec.describe 'Authentication', :type => :request do
         post '/refresh_access_token'
         expect(response.status).to eq(403)
 
-        post '/refresh_access_token', nil, @refresh_headers.dup.tap { |h| h.delete(:'X-User-Id') }
+        post '/refresh_access_token', headers: @refresh_headers.dup.tap { |h| h.delete(:'X-User-Id') }
         expect(response.status).to eq(403)
 
-        post '/refresh_access_token', nil, @refresh_headers.dup.tap { |h| h.delete(:'X-User-Refresh-Token') }
+        post '/refresh_access_token', headers: @refresh_headers.dup.tap { |h| h.delete(:'X-User-Refresh-Token') }
         expect(response.status).to eq(403)
       end
 
       it 'can not refresh access token when using an expired refresh token' do
         allow(Time).to receive(:now).and_return(ApiWarden::Scope::EXPIRE_TIME_FOR_REFRESH_TOKEN)
 
-        post '/refresh_access_token', nil, @refresh_headers
+        post '/refresh_access_token', headers: @refresh_headers
 
         expect(response.status).to eq(403)
       end
 
       it 'can refresh access token' do
-        post '/refresh_access_token', nil, @refresh_headers
+        post '/refresh_access_token', headers: @refresh_headers
 
         body = JSON.parse(response.body, symbolize_names: true)
         expect(body.keys).to contain_exactly(:uid, :access_token, :refresh_token)
@@ -121,7 +121,7 @@ RSpec.describe 'Authentication', :type => :request do
 
       context "after refreshing access token" do
         before do
-          post '/refresh_access_token', nil, @refresh_headers
+          post '/refresh_access_token', headers: @refresh_headers
           @auth = JSON.parse(response.body, symbolize_names: true)
           @headers = {
             'X-User-Id': @auth[:uid],
@@ -130,13 +130,13 @@ RSpec.describe 'Authentication', :type => :request do
         end
 
         it 'fails if using old refresh token' do
-          post '/refresh_access_token', nil, @refresh_headers
+          post '/refresh_access_token', headers: @refresh_headers
 
           expect(response.status).to eq(403)
         end
 
         it 'has access to protected resource' do
-          get '/resource/protected', nil, @headers
+          get '/resource/protected', headers: @headers
 
           expect(response.body).to include_json(msg: "I'm protected!")
         end

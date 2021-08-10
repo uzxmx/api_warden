@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = 'Use access token to protect your API in rails.'
   spec.description   = 'Use access token to protect your API in rails.'
-  spec.homepage      = 'https://github.com/UzxMx/api_warden'
+  spec.homepage      = 'https://github.com/uzxmx/api_warden'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'redis-namespace', '~> 1.5', '>= 1.5.2'
   spec.add_development_dependency 'fakeredis'
-  spec.add_development_dependency 'bundler', '~> 1.16'
+  spec.add_development_dependency 'bundler', '~> 2.2'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec-json_expectations'

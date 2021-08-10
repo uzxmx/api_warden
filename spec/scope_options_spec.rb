@@ -19,7 +19,7 @@ class ResourceController < ActionController::Base
 end
 
 Rails.application.routes.draw do
-  controller :resource, path: :resource do
+  scope controller: :resource, path: :resource do
     get :me, :value_for_access_token, :value_for_refresh_token
   end
 end
@@ -40,7 +40,7 @@ RSpec.describe 'Scope options', :type => :request do
       end
 
       it 'raises errors when invoking current_user' do
-        expect { get '/resource/me', nil, @headers }.to raise_error(NameError)
+        expect { get '/resource/me', headers: @headers }.to raise_error(NameError)
       end
 
       after do
@@ -58,7 +58,7 @@ RSpec.describe 'Scope options', :type => :request do
       end
 
       it 'renders user info' do
-        get '/resource/me', nil, @headers
+        get '/resource/me', headers: @headers
 
         expect(response.body).to include_json(id: 1, name: "foo")
       end
@@ -82,21 +82,21 @@ RSpec.describe 'Scope options', :type => :request do
 
     it 'can refresh when refresh token does not expire' do
       allow(Time).to receive(:now).and_return(3599)
-      get '/resource/protected', nil, @headers
+      get '/resource/protected', headers: @headers
       expect(response.body).to include_json(msg: "I'm protected!")
 
       allow(Time).to receive(:now).and_return(3600)
-      get '/resource/protected', nil, @headers
+      get '/resource/protected', headers: @headers
       expect(response.status).to eq(401)
 
-      post '/refresh_access_token', nil, @refresh_headers
+      post '/refresh_access_token', headers: @refresh_headers
       body = JSON.parse(response.body, symbolize_names: true)
       expect(body.keys).to contain_exactly(:uid, :access_token, :refresh_token)
     end
 
     it 'can not refresh when refresh token expired' do
       allow(Time).to receive(:now).and_return(7200)
-      post '/refresh_access_token', nil, @refresh_headers
+      post '/refresh_access_token', headers: @refresh_headers
       expect(response.status).to eq(403)
     end
 
@@ -134,7 +134,7 @@ RSpec.describe 'Scope options', :type => :request do
     end
 
     it 'renders access token value' do
-      get '/resource/value_for_access_token', nil, @headers
+      get '/resource/value_for_access_token', headers: @headers
       expect(response.body).to include_json(access_token: @auth[:access_token], uid: 1)
     end
 
@@ -171,12 +171,12 @@ RSpec.describe 'Scope options', :type => :request do
     end
 
     it 'renders 404 when passing no refresh token' do
-      get '/resource/value_for_refresh_token', nil, @headers
+      get '/resource/value_for_refresh_token', headers: @headers
       expect(response.status).to eq(404)
     end
 
     it 'renders refresh token value' do
-      get '/resource/value_for_refresh_token', nil, @headers.merge(@refresh_headers)
+      get '/resource/value_for_refresh_token', headers: @headers.merge(@refresh_headers)
       expect(response.body).to include_json(refresh_token: @auth[:refresh_token], uid: 1)
     end
 
