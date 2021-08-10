@@ -92,6 +92,8 @@ GEM
     nio4r (2.5.8)
     nokogiri (1.12.2-x86_64-darwin)
       racc (~> 1.4)
+    nokogiri (1.12.2-x86_64-linux)
+      racc (~> 1.4)
     parallel (1.20.1)
     parser (3.0.2.0)
       ast (~> 2.4.1)
@@ -126,7 +128,7 @@ GEM
       rake (>= 0.13)
       thor (~> 1.0)
     rainbow (3.0.0)
-    rake (10.5.0)
+    rake (13.0.6)
     redis (3.3.5)
     redis-namespace (1.8.1)
       redis (>= 3.0.4)
@@ -184,13 +186,14 @@ GEM
 
 PLATFORMS
   x86_64-darwin-20
+  x86_64-linux
 
 DEPENDENCIES
   api_warden!
   bundler (~> 2.2)
   fakeredis
   rails (~> 6.1.4)
-  rake (~> 10.0)
+  rake (~> 13.0)
   redis-namespace (~> 1.5, >= 1.5.2)
   rspec (~> 3.0)
   rspec-json_expectations
