@@ -17,7 +17,7 @@ class AuthenticationApplication < Rails::Application
   config.action_dispatch.show_exceptions = false
 
   # Disable request forgery protection in test environment.
-  config.action_controller.allow_forgery_protection = false  
+  config.action_controller.allow_forgery_protection = false
 
   config.secret_key_base = SecureRandom.uuid
 
@@ -48,7 +48,7 @@ class ResourceController < ActionController::Base
 
   def unprotected
     render json: { msg: "I'm unprotected!" }
-  end  
+  end
 
   def protected
     render json: { msg: "I'm protected!" }
@@ -76,7 +76,7 @@ module ApiWarden::RSpecHelpers
       @auth = JSON.parse(response.body, symbolize_names: true)
       @headers = {
         'X-User-Id': @auth[:uid],
-        'X-User-Access-Token': @auth[:access_token]        
+        'X-User-Access-Token': @auth[:access_token]
       }
       @refresh_headers = {
         'X-User-Id': @auth[:uid],

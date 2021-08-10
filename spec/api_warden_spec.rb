@@ -1,7 +1,5 @@
 RSpec.describe ApiWarden do
-
   describe '.ward_by' do
-
     it 'wards by users' do
       ApiWarden.ward_by(:users)
       expect(ApiWarden.remove_ward_by(:users)).to eq(true)

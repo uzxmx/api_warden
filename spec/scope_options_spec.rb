@@ -25,15 +25,13 @@ Rails.application.routes.draw do
 end
 
 RSpec.describe 'Scope options', :type => :request do
-
   before do
     ApiWarden.configure do |config|
       config.redis = ConnectionPool.new(:timeout => 1, :size => 1) { Redis.new }
     end
-  end  
+  end
 
   describe '#load_owner' do
-
     context 'without the option' do
       before do
         ApiWarden.ward_by(:users)
@@ -52,7 +50,7 @@ RSpec.describe 'Scope options', :type => :request do
 
     context 'with the option' do
       before do
-        ApiWarden.ward_by(:users, load_owner: proc { |id, value, auth| 
+        ApiWarden.ward_by(:users, load_owner: proc { |id, value, auth|
           { id: id, name: "foo" }
         })
 
@@ -68,11 +66,10 @@ RSpec.describe 'Scope options', :type => :request do
       after do
         ApiWarden.remove_ward_by(:users)
       end
-    end   
+    end
   end
 
   describe '#expire_time' do
-
     before do
       Redis.new.flushall
 
@@ -105,11 +102,10 @@ RSpec.describe 'Scope options', :type => :request do
 
     after do
       ApiWarden.remove_ward_by(:users)
-    end    
+    end
   end
 
   describe '#on_authenticate_failed' do
-
     before do
       ApiWarden.ward_by(:users, on_authenticate_failed: proc { |auth|
         render json: { custom_err_msg: 'authenticate failed' }, status: 200
@@ -129,7 +125,6 @@ RSpec.describe 'Scope options', :type => :request do
   end
 
   describe '#value_for_access_token' do
-
     before do
       ApiWarden.ward_by(:users, value_for_access_token: proc { |access_token, uid|
         {access_token: access_token, uid: uid}.to_json
@@ -167,7 +162,6 @@ RSpec.describe 'Scope options', :type => :request do
   end
 
   describe '#value_for_refresh_token' do
-
     before do
       ApiWarden.ward_by(:users, value_for_refresh_token: proc { |refresh_token, uid|
         {refresh_token: refresh_token, uid: uid}.to_json
@@ -194,6 +188,6 @@ RSpec.describe 'Scope options', :type => :request do
   after do
     ApiWarden.configure do |config|
       config.redis = nil
-    end    
-  end   
+    end
+  end
 end

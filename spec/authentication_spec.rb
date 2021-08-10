@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Authentication', :type => :request do
-
   before do
     Redis.new.flushall
 
@@ -36,18 +35,17 @@ RSpec.describe 'Authentication', :type => :request do
   end
 
   context 'with access token' do
-
     before do
       post '/sign_in'
       @auth = JSON.parse(response.body, symbolize_names: true)
       @headers = {
         'X-User-Id': @auth[:uid],
-        'X-User-Access-Token': @auth[:access_token]        
+        'X-User-Access-Token': @auth[:access_token]
       }
       @refresh_headers = {
         'X-User-Id': @auth[:uid],
         'X-User-Refresh-Token': @auth[:refresh_token]
-      }      
+      }
     end
 
     it 'has access to unprotected resource' do
@@ -75,7 +73,7 @@ RSpec.describe 'Authentication', :type => :request do
       get '/resource/protected', nil, @headers
 
       expect(response.status).to eq(401)
-    end    
+    end
 
     it 'does not have access to protected resource when using wrong token' do
       @headers[:'X-User-Access-Token'] += 'suffix'
@@ -85,7 +83,6 @@ RSpec.describe 'Authentication', :type => :request do
     end
 
     context 'when access token expired' do
-
       before do
         allow(Time).to receive(:now).and_return(ApiWarden::Scope::EXPIRE_TIME_FOR_ACCESS_TOKEN)
       end
@@ -123,13 +120,12 @@ RSpec.describe 'Authentication', :type => :request do
       end
 
       context "after refreshing access token" do
-
         before do
           post '/refresh_access_token', nil, @refresh_headers
           @auth = JSON.parse(response.body, symbolize_names: true)
           @headers = {
             'X-User-Id': @auth[:uid],
-            'X-User-Access-Token': @auth[:access_token]        
+            'X-User-Access-Token': @auth[:access_token]
           }
         end
 
