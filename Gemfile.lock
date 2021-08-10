@@ -126,7 +126,7 @@ GEM
       rake (>= 0.13)
       thor (~> 1.0)
     rainbow (3.0.0)
-    rake (10.5.0)
+    rake (13.0.6)
     redis (3.3.5)
     redis-namespace (1.8.1)
       redis (>= 3.0.4)
@@ -190,7 +190,7 @@ DEPENDENCIES
   bundler (~> 2.2)
   fakeredis
   rails (~> 6.1.4)
-  rake (~> 10.0)
+  rake (~> 13.0)
   redis-namespace (~> 1.5, >= 1.5.2)
   rspec (~> 3.0)
   rspec-json_expectations
